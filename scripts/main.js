@@ -1143,7 +1143,7 @@ function applyFilters() {
 function exportOrders() {
     try {
         // Create CSV content
-        let csv = 'ID,Tanggal,Customer,No HP,Ukuran,Jumlah,Total,Status Pesanan,Status Bayar\n';
+        let csv = 'ID,Tanggal,Customer,Ukuran,Jumlah,Total,Status Pesanan,Status Bayar\n';
         
         orders.forEach(order => {
             csv += `"${order.id || ''}","${order.date || ''}","${order.customer || ''}","${order.phone || ''}",`;
@@ -1701,8 +1701,8 @@ function saveNewOrder() {
         const paymentStatus = activePaymentElement.getAttribute('data-payment');
         
         // Validation
-        if (!customerName || !customerPhone) {
-            showToast('Nama dan No HP harus diisi', 'error');
+        if (!customerName) {
+            showToast('Nama harus diisi', 'error');
             return;
         }
         
