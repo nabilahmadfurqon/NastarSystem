@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="default">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍪 Nastar Noted | Premium Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader">
+            <div class="cookie">
+                <div class="chocolate-chips"></div>
+                <div class="chocolate-chips"></div>
+                <div class="chocolate-chips"></div>
+            </div>
+            <p>Loading Nastar System...</p>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-cookie-bite"></i>
+                <span class="logo-text">Nastar<span class="logo-highlight">Noted</span></span>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="#dashboard" class="menu-item active" data-page="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+                <div class="menu-badge" id="dashboardBadge">5</div>
+            </a>
+            
+            <a href="#production" class="menu-item" data-page="production">
+                <i class="fas fa-calculator"></i>
+                <span>Produksi & Modal</span>
+            </a>
+            
+            <a href="#orders" class="menu-item" data-page="orders">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Pesanan</span>
+                <div class="menu-badge" id="ordersBadge">3</div>
+            </a>
+            
+            <a href="#customers" class="menu-item" data-page="customers">
+                <i class="fas fa-users"></i>
+                <span>Pelanggan</span>
+            </a>
+            
+            <a href="#reports" class="menu-item" data-page="reports">
+                <i class="fas fa-chart-bar"></i>
+                <span>Laporan</span>
+            </a>
+            
+            <a href="#inventory" class="menu-item" data-page="inventory">
+                <i class="fas fa-boxes"></i>
+                <span>Inventory</span>
+            </a>
+            
+            <div class="menu-divider"></div>
+            
+            <a href="#settings" class="menu-item" data-page="settings">
+                <i class="fas fa-cog"></i>
+                <span>Pengaturan</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <span class="user-name">Admin Nastar</span>
+                    <span class="user-role">Pemilik Toko</span>
+                </div>
+            </div>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                <div class="breadcrumb">
+                    <span>Home</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span id="breadcrumbPage">Dashboard</span>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search orders, customers...">
+                    </div>
+                    
+                    <button class="btn-notification" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    
+                    <div class="quick-actions">
+                        <button class="btn-quick btn-primary" onclick="showNewOrderModal()">
+                            <i class="fas fa-plus"></i>
+                            Pesanan Baru
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Dashboard Page -->
+            <div class="page" id="dashboardPage">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card stat-primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Penjualan Hari Ini</h3>
+                            <p class="stat-value" id="todaySales">Rp 0</p>
+                            <p class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> 12% dari kemarin
+                            </p>
+                        </div>
+                        <div class="stat-chart mini">
+                            <canvas id="miniSalesChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card stat-warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Menunggu Diproses</h3>
+                            <p class="stat-value" id="pendingOrders">0</p>
+                            <p class="stat-desc">Pesanan belum selesai</p>
+                        </div>
+                        <div class="stat-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                            </div>
+                            <span>65% sedang diproses</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card stat-danger">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Belum Bayar</h3>
+                            <p class="stat-value" id="unpaidOrders">0</p>
+                            <p class="stat-desc">Perlu penagihan</p>
+                        </div>
+                        <div class="stat-badges">
+                            <span class="badge badge-danger">Urgent</span>
+                            <span class="badge badge-warning">Medium</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card stat-success">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Pelanggan Baru</h3>
+                            <p class="stat-value" id="newCustomers">0</p>
+                            <p class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> 5 bulan ini
+                            </p>
+                        </div>
+                        <div class="stat-avatar-group">
+                            <div class="avatar"></div>
+                            <div class="avatar"></div>
+                            <div class="avatar"></div>
+                            <div class="avatar">+2</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-container large">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-line"></i> Penjualan 30 Hari Terakhir</h3>
+                            <div class="chart-controls">
+                                <select id="salesPeriod">
+                                    <option value="30">30 Hari</option>
+                                    <option value="7">7 Hari</option>
+                                    <option value="90">90 Hari</option>
+                                </select>
+                            </div>
+                        </div>
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-pie"></i> Distribusi Ukuran</h3>
+                        </div>
+                        <canvas id="sizeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="table-container card">
+                    <div class="table-header">
+                        <h3><i class="fas fa-history"></i> Pesanan Terbaru</h3>
+                        <button class="btn-text" onclick="showPage('orders')">
+                            Lihat Semua <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table-styled">
+                            <thead>
+                                <tr>
+                                    <th>ID Pesanan</th>
+                                    <th>Customer</th>
+                                    <th>Ukuran</th>
+                                    <th>Jumlah</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersTable">
+                                <!-- Data akan diisi -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Production Page -->
+            <div class="page" id="productionPage" style="display: none;">
+                <div class="page-header">
+                    <h2><i class="fas fa-calculator"></i> Produksi & Modal</h2>
+                    <p>Kelola bahan baku dan hitung modal produksi</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Bahan Baku</h3>
+                                <button class="btn-primary btn-sm" onclick="showMaterialModal()">
+                                    <i class="fas fa-plus"></i> Tambah Bahan
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table-styled">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Bahan</th>
+                                            <th>Harga</th>
+                                            <th>Satuan</th>
+                                            <th>Stok</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="materialsTable">
+                                        <!-- Data akan diisi -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Kalkulator Modal</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Ukuran Nastar</label>
+                                    <select class="form-control" id="calcSize" onchange="calculateProductionCost()">
+                                        <option value="kecil">Kecil (250g)</option>
+                                        <option value="sedang">Sedang (500g)</option>
+                                        <option value="besar">Besar (1000g)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="calculation-result">
+                                    <div class="calc-item">
+                                        <span>Modal Bahan</span>
+                                        <span id="materialCost">Rp 0</span>
+                                    </div>
+                                    <div class="calc-item">
+                                        <span>Biaya Produksi</span>
+                                        <span id="productionCost">Rp 0</span>
+                                    </div>
+                                    <div class="calc-item">
+                                        <span>Kemasan</span>
+                                        <span id="packagingCost">Rp 0</span>
+                                    </div>
+                                    <div class="calc-divider"></div>
+                                    <div class="calc-item total">
+                                        <span>Total Modal</span>
+                                        <span id="totalCost">Rp 0</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group mt-4">
+                                    <label>Harga Jual</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">Rp</span>
+                                        <input type="number" class="form-control" id="sellingPrice" 
+                                               onchange="calculateProfit()">
+                                    </div>
+                                </div>
+                                
+                                <div class="profit-display">
+                                    <div class="profit-item">
+                                        <span>Keuntungan</span>
+                                        <span id="profitAmount" class="profit-positive">Rp 0</span>
+                                    </div>
+                                    <div class="profit-item">
+                                        <span>Margin</span>
+                                        <span id="profitMargin" class="profit-positive">0%</span>
+                                    </div>
+                                    <div class="profit-item">
+                                        <span>ROI</span>
+                                        <span id="roi" class="profit-positive">0%</span>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn-primary btn-block mt-4" onclick="savePriceSettings()">
+                                    <i class="fas fa-save"></i> Simpan Harga
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Page -->
+            <div class="page" id="ordersPage" style="display: none;">
+                <div class="page-header">
+                    <h2><i class="fas fa-shopping-cart"></i> Manajemen Pesanan</h2>
+                    <div class="page-actions">
+                        <button class="btn-primary" onclick="showNewOrderModal()">
+                            <i class="fas fa-plus"></i> Pesanan Baru
+                        </button>
+                        <button class="btn-secondary" onclick="exportOrders()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filters-card">
+                    <div class="filter-group">
+                        <label>Status Pesanan:</label>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">Semua</button>
+                            <button class="filter-btn" data-filter="waiting">Menunggu</button>
+                            <button class="filter-btn" data-filter="completed">Selesai</button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Status Bayar:</label>
+                        <div class="filter-buttons">
+                            <button class="filter-btn" data-filter="unpaid">Belum Bayar</button>
+                            <button class="filter-btn" data-filter="paid">Lunas</button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Tanggal:</label>
+                        <input type="date" class="form-control" id="dateFilter">
+                    </div>
+                    
+                    <button class="btn-primary" onclick="applyFilters()">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                </div>
+
+                <div class="table-container card">
+                    <div class="table-responsive">
+                        <table class="table-styled">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tanggal</th>
+                                    <th>Customer</th>
+                                    <th>Ukuran</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th>Status Pesanan</th>
+                                    <th>Status Bayar</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTable">
+                                <!-- Data akan diisi -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <div class="table-info">
+                            Menampilkan <span id="showingCount">0</span> dari <span id="totalCount">0</span> pesanan
+                        </div>
+                        <div class="pagination" id="pagination">
+                            <!-- Pagination akan diisi -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customers Page -->
+            <div class="page" id="customersPage" style="display: none;">
+                <div class="page-header">
+                    <h2><i class="fas fa-users"></i> Data Pelanggan</h2>
+                </div>
+                
+                <div class="row">
+                    <div class="col-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Daftar Pelanggan</h3>
+                                <div class="search-box small">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" placeholder="Cari pelanggan..." id="customerSearch">
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table-styled">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama</th>
+                                            <th>No HP</th>
+                                            <th>Total Order</th>
+                                            <th>Total Belanja</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="customersTable">
+                                        <!-- Data akan diisi -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Top 5 Pelanggan</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="top-customers" id="topCustomers">
+                                    <!-- Data akan diisi -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h3>Statistik Pelanggan</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="customerChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div class="page" id="reportsPage" style="display: none;">
+                <div class="page-header">
+                    <h2><i class="fas fa-chart-bar"></i> Laporan & Analisis</h2>
+                    <div class="page-actions">
+                        <button class="btn-primary" onclick="printReport()">
+                            <i class="fas fa-print"></i> Cetak
+                        </button>
+                        <button class="btn-success" onclick="exportReport()">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                    </div>
+                </div>
+
+                <div class="report-controls">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Periode</label>
+                            <select class="form-control" id="reportPeriod">
+                                <option value="today">Hari Ini</option>
+                                <option value="week">Minggu Ini</option>
+                                <option value="month" selected>Bulan Ini</option>
+                                <option value="quarter">Kuartal Ini</option>
+                                <option value="year">Tahun Ini</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="customDateRange" style="display: none;">
+                            <label>Tanggal</label>
+                            <div class="date-range">
+                                <input type="date" class="form-control" id="startDate">
+                                <span>s/d</span>
+                                <input type="date" class="form-control" id="endDate">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Jenis Laporan</label>
+                            <select class="form-control" id="reportType">
+                                <option value="sales">Penjualan</option>
+                                <option value="profit">Keuntungan</option>
+                                <option value="customer">Pelanggan</option>
+                                <option value="inventory">Inventory</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button class="btn-primary" onclick="generateReport()">
+                                <i class="fas fa-sync-alt"></i> Generate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-summary">
+                    <div class="report-card">
+                        <h4>Total Penjualan</h4>
+                        <p class="report-value" id="reportTotal">Rp 0</p>
+                        <div class="report-trend positive">
+                            <i class="fas fa-arrow-up"></i> 15% dari periode lalu
+                        </div>
+                    </div>
+                    
+                    <div class="report-card">
+                        <h4>Total Keuntungan</h4>
+                        <p class="report-value" id="reportProfit">Rp 0</p>
+                        <div class="report-trend positive">
+                            <i class="fas fa-arrow-up"></i> 12% dari periode lalu
+                        </div>
+                    </div>
+                    
+                    <div class="report-card">
+                        <h4>Rata-rata Pesanan</h4>
+                        <p class="report-value" id="reportAverage">Rp 0</p>
+                        <div class="report-trend negative">
+                            <i class="fas fa-arrow-down"></i> 3% dari periode lalu
+                        </div>
+                    </div>
+                    
+                    <div class="report-card">
+                        <h4>Total Pesanan</h4>
+                        <p class="report-value" id="reportOrders">0</p>
+                        <div class="report-trend positive">
+                            <i class="fas fa-arrow-up"></i> 8% dari periode lalu
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-charts">
+                    <div class="chart-container large">
+                        <div class="chart-header">
+                            <h4>Trend Penjualan</h4>
+                        </div>
+                        <canvas id="reportSalesChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h4>Komposisi Ukuran</h4>
+                        </div>
+                        <canvas id="reportSizeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="report-table card mt-4">
+                    <div class="card-header">
+                        <h4>Detail Transaksi</h4>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table-styled">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>ID Pesanan</th>
+                                    <th>Customer</th>
+                                    <th>Ukuran</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th>Keuntungan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTable">
+                                <!-- Data akan diisi -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Page -->
+            <div class="page" id="inventoryPage" style="display: none;">
+                <div class="page-header">
+                    <h2><i class="fas fa-boxes"></i> Manajemen Inventory</h2>
+                </div>
+                
+                <div class="inventory-stats">
+                    <div class="inventory-card">
+                        <div class="inventory-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="inventory-info">
+                            <h4>Total Bahan Baku</h4>
+                            <p class="inventory-value" id="totalMaterials">0 item</p>
+                        </div>
+                    </div>
+                    
+                    <div class="inventory-card">
+                        <div class="inventory-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="inventory-info">
+                            <h4>Hampir Habis</h4>
+                            <p class="inventory-value" id="lowStockCount">0 item</p>
+                        </div>
+                    </div>
+                    
+                    <div class="inventory-card">
+                        <div class="inventory-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="inventory-info">
+                            <h4>Nilai Inventory</h4>
+                            <p class="inventory-value" id="inventoryValue">Rp 0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="inventory-card">
+                        <div class="inventory-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="inventory-info">
+                            <h4>Turnover Rate</h4>
+                            <p class="inventory-value" id="turnoverRate">0%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Stok Bahan Baku</h3>
+                                <button class="btn-primary btn-sm" onclick="showInventoryModal()">
+                                    <i class="fas fa-plus"></i> Tambah Stok
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table-styled">
+                                    <thead>
+                                        <tr>
+                                            <th>Bahan</th>
+                                            <th>Stok</th>
+                                            <th>Min. Stok</th>
+                                            <th>Status</th>
+                                            <th>Harga</th>
+                                            <th>Total Nilai</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="inventoryTable">
+                                        <!-- Data akan diisi -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Stok Warning</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert-list" id="stockAlerts">
+                                    <!-- Alert akan diisi -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h3>Penggunaan Bahan</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="inventoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div class="page" id="settingsPage" style="display: none;">
+                <div class="page-header">
+                    <h2><i class="fas fa-cog"></i> Pengaturan Sistem</h2>
+                </div>
+                
+                <div class="row">
+                    <div class="col-4">
+                        <div class="settings-nav">
+                            <a href="#api" class="settings-nav-item active" data-settings="api">
+                                <i class="fas fa-database"></i> API & Database
+                            </a>
+                            <a href="#theme" class="settings-nav-item" data-settings="theme">
+                                <i class="fas fa-palette"></i> Tema & Tampilan
+                            </a>
+                            <a href="#product" class="settings-nav-item" data-settings="product">
+                                <i class="fas fa-cookie-bite"></i> Produk & Harga
+                            </a>
+                            <a href="#notification" class="settings-nav-item" data-settings="notification">
+                                <i class="fas fa-bell"></i> Notifikasi
+                            </a>
+                            <a href="#backup" class="settings-nav-item" data-settings="backup">
+                                <i class="fas fa-save"></i> Backup & Restore
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-8">
+                        <!-- API Settings -->
+                        <div class="settings-content active" id="apiSettings">
+                            <h3><i class="fas fa-database"></i> Koneksi Database</h3>
+                            <div class="form-group">
+                                <label>Google Sheets API URL</label>
+                                <input type="text" class="form-control" id="apiUrl" 
+                                       placeholder="https://sheet.best/api/sheets/...">
+                                <small class="form-text">Dapatkan dari sheet.best</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>API Key (opsional)</label>
+                                <input type="password" class="form-control" id="apiKey">
+                            </div>
+                            
+                            <div class="form-group">
+                                <button class="btn-primary" onclick="testConnection()">
+                                    <i class="fas fa-plug"></i> Test Koneksi
+                                </button>
+                                <button class="btn-success" onclick="saveAPISettings()">
+                                    <i class="fas fa-save"></i> Simpan
+                                </button>
+                            </div>
+                            
+                            <div class="connection-status" id="connectionStatus">
+                                <i class="fas fa-circle"></i> Status: Tidak Terhubung
+                            </div>
+                        </div>
+                        
+                        <!-- Theme Settings -->
+                        <div class="settings-content" id="themeSettings">
+                            <h3><i class="fas fa-palette"></i> Tema & Tampilan</h3>
+                            <div class="theme-selector">
+                                <div class="theme-option active" data-theme="default">
+                                    <div class="theme-preview default-theme"></div>
+                                    <span>Default</span>
+                                </div>
+                                
+                                <div class="theme-option" data-theme="dark">
+                                    <div class="theme-preview dark-theme"></div>
+                                    <span>Dark Mode</span>
+                                </div>
+                                
+                                <div class="theme-option" data-theme="premium">
+                                    <div class="theme-preview premium-theme"></div>
+                                    <span>Premium</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group mt-4">
+                                <label>Layout Sidebar</label>
+                                <select class="form-control" id="layoutMode">
+                                    <option value="collapsible">Collapsible</option>
+                                    <option value="fixed">Fixed</option>
+                                    <option value="hidden">Hidden</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Animasi</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="animationsToggle" checked>
+                                    <label for="animationsToggle"></label>
+                                    <span>Enable animations</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Product Settings -->
+                        <div class="settings-content" id="productSettings">
+                            <h3><i class="fas fa-cookie-bite"></i> Pengaturan Produk</h3>
+                            <div class="form-group">
+                                <label>Nama Produk</label>
+                                <input type="text" class="form-control" id="productName" value="Nastar Keju">
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Harga Kecil (250g)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Rp</span>
+                                            <input type="number" class="form-control" id="priceSmall">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Harga Sedang (500g)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Rp</span>
+                                            <input type="number" class="form-control" id="priceMedium">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Harga Besar (1000g)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Rp</span>
+                                            <input type="number" class="form-control" id="priceLarge">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn-primary" onclick="saveProductSettings()">
+                                <i class="fas fa-save"></i> Simpan Harga
+                            </button>
+                        </div>
+                        
+                        <!-- Other settings would go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer"></div>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+    
+    <!-- New Order Modal -->
+    <div class="modal" id="newOrderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Pesanan Baru</h3>
+                <button class="modal-close" onclick="closeModal('newOrderModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nama Customer</label>
+                        <input type="text" class="form-control" id="modalCustomerName">
+                    </div>
+                    <div class="form-group">
+                        <label>No HP</label>
+                        <input type="text" class="form-control" id="modalCustomerPhone">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ukuran Nastar</label>
+                        <div class="size-selector">
+                            <div class="size-option" data-size="kecil">
+                                <div class="size-icon">
+                                    <i class="fas fa-cookie"></i>
+                                </div>
+                                <span>Kecil</span>
+                                <small>250g</small>
+                                <div class="size-price">Rp 43.000</div>
+                            </div>
+                            
+                            <div class="size-option active" data-size="sedang">
+                                <div class="size-icon">
+                                    <i class="fas fa-cookie-bite"></i>
+                                </div>
+                                <span>Sedang</span>
+                                <small>500g</small>
+                                <div class="size-price">Rp 85.000</div>
+                            </div>
+                            
+                            <div class="size-option" data-size="besar">
+                                <div class="size-icon">
+                                    <i class="fas fa-birthday-cake"></i>
+                                </div>
+                                <span>Besar</span>
+                                <small>1000g</small>
+                                <div class="size-price">Rp 165.000</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Jumlah (Toples)</label>
+                        <div class="quantity-selector">
+                            <button class="quantity-btn" onclick="adjustQuantity(-1)">-</button>
+                            <input type="number" class="quantity-input" id="orderQuantity" value="1" min="1">
+                            <button class="quantity-btn" onclick="adjustQuantity(1)">+</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Total</label>
+                        <div class="total-display">
+                            <span id="orderTotal">Rp 85.000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Status Pesanan</label>
+                        <div class="status-selector">
+                            <div class="status-option active" data-status="waiting">
+                                <i class="fas fa-clock"></i>
+                                <span>Menunggu</span>
+                            </div>
+                            <div class="status-option" data-status="completed">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Selesai</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Status Pembayaran</label>
+                        <div class="payment-selector">
+                            <div class="payment-option active" data-payment="unpaid">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Belum Bayar</span>
+                            </div>
+                            <div class="payment-option" data-payment="paid">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Lunas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('newOrderModal')">Batal</button>
+                <button class="btn-primary" onclick="saveNewOrder()">
+                    <i class="fas fa-save"></i> Simpan Pesanan
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Other modals would go here -->
+
+    <!-- JavaScript Files -->
+    <script src="scripts/database.js"></script>
+    <script src="scripts/charts.js"></script>
+    <script src="scripts/theme.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>

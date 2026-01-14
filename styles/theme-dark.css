@@ -1,0 +1,203 @@
+/* =============================================
+   DARK THEME - Modern Dark Mode
+   ============================================= */
+
+/* Dark theme variables are defined in theme.js
+   This file provides additional dark mode styles */
+
+.theme-dark body {
+    color-scheme: dark;
+}
+
+.theme-dark .logo {
+    color: #ff9800;
+}
+
+.theme-dark .logo-highlight {
+    color: #ffb74d;
+}
+
+.theme-dark .sidebar {
+    background: #1a1a1a;
+    border-right: 1px solid #333333;
+}
+
+.theme-dark .sidebar-header {
+    background: #2a2a2a;
+    border-bottom: 1px solid #333333;
+}
+
+.theme-dark .menu-item {
+    color: #b0b0b0;
+}
+
+.theme-dark .menu-item:hover {
+    background: #2a2a2a;
+    color: #ff9800;
+}
+
+.theme-dark .menu-item.active {
+    background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+    color: #1a1a1a;
+}
+
+.theme-dark .card {
+    background: #1e1e1e;
+    border: 1px solid #333333;
+}
+
+.theme-dark .table-styled {
+    background: #1e1e1e;
+}
+
+.theme-dark .table-styled th {
+    background: #2a2a2a;
+    color: #b0b0b0;
+    border-bottom: 1px solid #333333;
+}
+
+.theme-dark .table-styled td {
+    border-bottom: 1px solid #333333;
+    color: #b0b0b0;
+}
+
+.theme-dark .table-styled tr:hover {
+    background: #2a2a2a;
+}
+
+.theme-dark .form-control {
+    background: #2a2a2a;
+    border-color: #333333;
+    color: #b0b0b0;
+}
+
+.theme-dark .form-control:focus {
+    background: #2a2a2a;
+    border-color: #ff9800;
+    color: #ffffff;
+}
+
+.theme-dark .search-box input {
+    background: #2a2a2a;
+    border-color: #333333;
+    color: #b0b0b0;
+}
+
+.theme-dark .btn-secondary {
+    background: #2a2a2a;
+    border-color: #333333;
+    color: #b0b0b0;
+}
+
+.theme-dark .btn-secondary:hover {
+    background: #333333;
+    border-color: #ff9800;
+    color: #ff9800;
+}
+
+.theme-dark .modal {
+    background: #1e1e1e;
+    border: 1px solid #333333;
+}
+
+.theme-dark .modal-header {
+    background: #2a2a2a;
+    border-bottom: 1px solid #333333;
+    color: #ffffff;
+}
+
+.theme-dark .modal-close {
+    color: #b0b0b0;
+}
+
+.theme-dark .modal-close:hover {
+    color: #ff9800;
+}
+
+.theme-dark .toast {
+    background: #2a2a2a;
+    border-left-color: #ff9800;
+    color: #b0b0b0;
+}
+
+.theme-dark .size-option {
+    background: #2a2a2a;
+    border-color: #333333;
+    color: #b0b0b0;
+}
+
+.theme-dark .size-option:hover,
+.theme-dark .size-option.active {
+    border-color: #ff9800;
+    background: #333333;
+    color: #ffffff;
+}
+
+.theme-dark .status-option,
+.theme-dark .payment-option {
+    background: #2a2a2a;
+    border-color: #333333;
+    color: #b0b0b0;
+}
+
+.theme-dark .status-option:hover,
+.theme-dark .status-option.active,
+.theme-dark .payment-option:hover,
+.theme-dark .payment-option.active {
+    border-color: #ff9800;
+    background: #333333;
+    color: #ffffff;
+}
+
+.theme-dark .total-display {
+    background: #2a2a2a;
+    color: #ff9800;
+}
+
+.theme-dark .calculation-result {
+    background: #2a2a2a;
+    border: 1px solid #333333;
+}
+
+.theme-dark .profit-display {
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.theme-dark .toggle-switch label {
+    background: #333333;
+}
+
+.theme-dark .connection-status {
+    background: rgba(244, 67, 54, 0.1);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    color: #f44336;
+}
+
+.theme-dark .connection-status.connected {
+    background: rgba(76, 175, 80, 0.1);
+    border-color: rgba(76, 175, 80, 0.3);
+    color: #4caf50;
+}
+
+/* Chart adjustments for dark mode */
+.theme-dark canvas {
+    filter: brightness(0.9) contrast(1.1);
+}
+
+/* Print styles for dark mode */
+@media print {
+    .theme-dark .card,
+    .theme-dark .table-container {
+        background: white !important;
+        color: black !important;
+        border: 1px solid black !important;
+    }
+    
+    .theme-dark .table-styled th,
+    .theme-dark .table-styled td {
+        background: white !important;
+        color: black !important;
+        border-color: black !important;
+    }
+}
